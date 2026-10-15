@@ -1,4 +1,4 @@
-title: My Personal Site
+title: my personal site (wip)
 author: Joseph Taggart # name of site's author
 url: https://josephtaggart.github.io # root address of the site
 baseurl: # "/no-style-please" # subpath of the site, e.g. "/blog" (leave it blank "" if you're site shouldn't use a subpath)
@@ -14,7 +14,7 @@ theme_config:
   appearance: "auto" # can be "light", "dark" or "auto"
   back_home_text: ".." # customize text for homepage link in post layout
   date_format: "%Y-%m-%d" # customize how date is formatted
-  show_description: true # show blog description in home page
+  show_description: false # show blog description in home page
   lowercase_titles: true # show titles in lowercase in lists
 
 sass:
