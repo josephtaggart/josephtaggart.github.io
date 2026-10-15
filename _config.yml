@@ -1,0 +1,14 @@
+title: My Personal Site
+description: my personal site
+
+remote_theme: riggraz/no-style-please
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-feed
+  - jekyll-seo-tag
+
+theme_config:
+  appearance: "auto"
+  show_description: true
+  lowercase_titles: true
