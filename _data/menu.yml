@@ -1,7 +1,8 @@
 entries:
   - title: info
     entries:
-      - title:
+      - title: github
+        url: https://github.com/josephtaggart
       - title: linkedin
         url: https://www.linkedin.com/in/joe-taggart/
       
