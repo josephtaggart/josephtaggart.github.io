@@ -3,7 +3,7 @@ name: Update Last.fm artists
 on:
   workflow_dispatch:
   schedule:
-    - cron: "11 4 * * 0" # updates every sunday at 4:11 utc
+    - cron: "11 4 * * 0" # Every Sunday at 04:11 UTC
 
 permissions:
   contents: write
@@ -16,25 +16,31 @@ jobs:
 
       - name: Fetch top artists from Last.fm
         env:
-          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }} 
+          LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_USERNAME: ${{ vars.LASTFM_USERNAME }}
         run: |
-          test -n "$LASTFM_API_KEY" # checks if api key and username are blank/missing
+          # Stop if the API key or username is missing.
+          test -n "$LASTFM_API_KEY"
           test -n "$LASTFM_USERNAME"
+
           mkdir -p _data
+
+          # Fetch the ten most-listened artists from the last 30 days.
           curl --fail-with-body --silent --show-error --get \
-            --data-urlencode "method=user.gettopartists" \ # calls top artists
-            --data-urlencode "user=$LASTFM_USERNAME" \ # of my username
-            --data-urlencode "api_key=$LASTFM_API_KEY" \ # api key
-            --data-urlencode "period=1month" \ # all-time listening history
-            --data-urlencode "limit=10" \ # specific number of artists
-            --data-urlencode "format=json" \ # json so can be read by jekyll
+            --data-urlencode "method=user.gettopartists" \
+            --data-urlencode "user=$LASTFM_USERNAME" \
+            --data-urlencode "api_key=$LASTFM_API_KEY" \
+            --data-urlencode "period=1month" \
+            --data-urlencode "limit=10" \
+            --data-urlencode "format=json" \
             "https://ws.audioscrobbler.com/2.0/" > _data/lastfm.json
+
+          # Confirm Last.fm returned an artist list rather than an API error.
           jq -e '.topartists.artist | type == "array"' _data/lastfm.json > /dev/null
 
       - name: Commit updated data
         run: |
-          git config user.name "github-actions[bot]" # username for the commit
+          git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add _data/lastfm.json
           git diff --cached --quiet || git commit -m "Update Last.fm artists"
