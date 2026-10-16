@@ -5,7 +5,7 @@ baseurl: # "/no-style-please" # subpath of the site, e.g. "/blog" (leave it blan
 description: my personal site
 
 # Build settings
-theme: no-style-please
+remote_theme: no-style-please
 
 theme_config:
   appearance: "auto" # can be "light", "dark" or "auto"
