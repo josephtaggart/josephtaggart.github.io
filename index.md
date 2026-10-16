@@ -1,6 +1,6 @@
 ---
 layout: home
-title: joe taggart | about
+title: Joe taggart | about
 ---
 
 {% include footer.html %}
