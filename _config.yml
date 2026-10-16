@@ -4,11 +4,8 @@ url: https://josephtaggart.github.io # root address of the site
 baseurl: # "/no-style-please" # subpath of the site, e.g. "/blog" (leave it blank "" if you're site shouldn't use a subpath)
 description: my personal site
 
-permalink: /:slug.html
-
-favicon: # "logo.png" # name+extension of favicon (which must be put on the root folder)
-
-remote_theme: riggraz/no-style-please
+# Build settings
+theme: no-style-please
 
 theme_config:
   appearance: "auto" # can be "light", "dark" or "auto"
