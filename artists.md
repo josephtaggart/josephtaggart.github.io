@@ -1,10 +1,10 @@
 ---
 layout: page
-title: "Top artists | Joe Taggart"
+title: "music!"
 permalink: /artists/
 ---
 
-<p>Your most-listened artists on Last.fm:</p>
+<p>My most-listened artists of the last 30 days:</p>
 
 {% assign artists = site.data.lastfm.topartists.artist %}
 {% if artists and artists.size > 0 %}

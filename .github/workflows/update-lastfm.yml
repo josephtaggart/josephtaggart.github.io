@@ -26,7 +26,7 @@ jobs:
             --data-urlencode "method=user.gettopartists" \ # calls top artists
             --data-urlencode "user=$LASTFM_USERNAME" \ # of my username
             --data-urlencode "api_key=$LASTFM_API_KEY" \ # api key
-            --data-urlencode "period=overall" \ # all-time listening history
+            --data-urlencode "period=1month" \ # all-time listening history
             --data-urlencode "limit=10" \ # specific number of artists
             --data-urlencode "format=json" \ # json so can be read by jekyll
             "https://ws.audioscrobbler.com/2.0/" > _data/lastfm.json
