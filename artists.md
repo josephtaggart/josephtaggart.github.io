@@ -1,4 +1,4 @@
----
+-
 layout: page
 title: "music!"
 permalink: /artists/
@@ -19,3 +19,5 @@ permalink: /artists/
 {% else %}
 <p>The artist list has not been refreshed yet. Run the <strong>Update Last.fm artists</strong> workflow from the Actions tab.</p>
 {% endif %}
+
+{% include footer.html %}
