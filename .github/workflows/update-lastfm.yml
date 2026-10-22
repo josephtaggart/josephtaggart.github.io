@@ -1,4 +1,4 @@
-name: Update Last.fm artists
+name: Update Last.fm charts
 
 on:
   workflow_dispatch:
@@ -14,15 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Fetch top artists from Last.fm
+      - name: Fetch top artists, albums, and tracks from Last.fm
         env:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_USERNAME: ${{ vars.LASTFM_USERNAME }}
         run: |
-          # Stop if the API key or username is missing.
-          test -n "$LASTFM_API_KEY"
-          test -n "$LASTFM_USERNAME"
-
           mkdir -p _data
 
           # Fetch the ten most-listened artists from the last 30 days.
@@ -35,13 +31,31 @@ jobs:
             --data-urlencode "format=json" \
             "https://ws.audioscrobbler.com/2.0/" > _data/lastfm.json
 
-          # Confirm Last.fm returned an artist list rather than an API error.
-          jq -e '.topartists.artist | type == "array"' _data/lastfm.json > /dev/null
+          # Fetch the ten most-listened albums from the last 30 days.
+          curl --fail-with-body --silent --show-error --get \
+            --data-urlencode "method=user.gettopalbums" \
+            --data-urlencode "user=$LASTFM_USERNAME" \
+            --data-urlencode "api_key=$LASTFM_API_KEY" \
+            --data-urlencode "period=1month" \
+            --data-urlencode "limit=10" \
+            --data-urlencode "format=json" \
+            "https://ws.audioscrobbler.com/2.0/" > _data/lastfm-albums.json
+
+          # Fetch the ten most-listened tracks from the last 30 days.
+          curl --fail-with-body --silent --show-error --get \
+            --data-urlencode "method=user.gettoptracks" \
+            --data-urlencode "user=$LASTFM_USERNAME" \
+            --data-urlencode "api_key=$LASTFM_API_KEY" \
+            --data-urlencode "period=1month" \
+            --data-urlencode "limit=10" \
+            --data-urlencode "format=json" \
+            "https://ws.audioscrobbler.com/2.0/" > _data/lastfm-tracks.json
 
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _data/lastfm.json
-          git diff --cached --quiet || git commit -m "Update Last.fm artists"
+          git add _data/lastfm.json _data/lastfm-albums.json _data/lastfm-tracks.json
+          git diff --cached --quiet || git commit -m "Update Last.fm charts"
           git push
+
