@@ -18,7 +18,8 @@ permalink: /music/
 </ol>
 
 <h2>Albums</h2>
-{% assign albums = site.data.lastfm.topalbums.album %}
+{% assign albums_data = site.data['lastfm-albums'] %}
+{% assign albums = albums_data.topalbums.album %}
 <ol>
   {% for album in albums %}
     <li>
@@ -29,7 +30,8 @@ permalink: /music/
 </ol>
 
 <h2>Tracks</h2>
-{% assign tracks = site.data.lastfm.toptracks.track %}
+{% assign tracks_data = site.data['lastfm-tracks'] %}
+{% assign tracks = tracks_data.toptracks.track %}
 <ol>
   {% for track in tracks %}
     <li>
