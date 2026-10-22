@@ -1,13 +1,13 @@
 ---
 layout: page
 title: "music!"
-permalink: /artists/
+permalink: /music/
 ---
 
-<p>My most-listened artists of the last 30 days:</p>
+<p>My most-listened artists, albums, and tracks of the last 30 days:</p>
 
+<h2>Artists</h2>
 {% assign artists = site.data.lastfm.topartists.artist %}
-{% if artists and artists.size > 0 %}
 <ol>
   {% for artist in artists %}
     <li>
@@ -16,8 +16,27 @@ permalink: /artists/
     </li>
   {% endfor %}
 </ol>
-{% else %}
-<p>The artist list has not been refreshed yet. Run the <strong>Update Last.fm artists</strong> workflow from the Actions tab.</p>
-{% endif %}
+
+<h2>Albums</h2>
+{% assign albums = site.data.lastfm.topalbums.album %}
+<ol>
+  {% for album in albums %}
+    <li>
+      <a href="{{ album.url }}" target="_blank" rel="noreferrer">{{ album.name }}</a>
+      by {{ album.artist.name }} — {{ album.playcount }} plays
+    </li>
+  {% endfor %}
+</ol>
+
+<h2>Tracks</h2>
+{% assign tracks = site.data.lastfm.toptracks.track %}
+<ol>
+  {% for track in tracks %}
+    <li>
+      <a href="{{ track.url }}" target="_blank" rel="noreferrer">{{ track.name }}</a>
+      by {{ track.artist.name }} — {{ track.playcount }} plays
+    </li>
+  {% endfor %}
+</ol>
 
 {% include footer.html %}
