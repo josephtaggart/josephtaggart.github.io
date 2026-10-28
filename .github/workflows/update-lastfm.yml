@@ -7,12 +7,26 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  fetch:
-    runs-on: ubuntu-latest
+  update-and-deploy:
+    runs-on: ubuntu-24.04
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Fetch top artists, albums, and tracks from Last.fm
         env:
@@ -21,7 +35,7 @@ jobs:
         run: |
           mkdir -p _data
 
-          # Fetch the ten most-listened artists from the last 30 days.
+          # Top artists
           curl --fail-with-body --silent --show-error --get \
             --data-urlencode "method=user.gettopartists" \
             --data-urlencode "user=$LASTFM_USERNAME" \
@@ -29,9 +43,10 @@ jobs:
             --data-urlencode "period=1month" \
             --data-urlencode "limit=10" \
             --data-urlencode "format=json" \
-            "https://ws.audioscrobbler.com/2.0/" > _data/lastfm.json
+            "https://ws.audioscrobbler.com/2.0/" \
+            > _data/lastfm.json
 
-          # Fetch the ten most-listened albums from the last 30 days.
+          # Top albums
           curl --fail-with-body --silent --show-error --get \
             --data-urlencode "method=user.gettopalbums" \
             --data-urlencode "user=$LASTFM_USERNAME" \
@@ -39,9 +54,10 @@ jobs:
             --data-urlencode "period=1month" \
             --data-urlencode "limit=10" \
             --data-urlencode "format=json" \
-            "https://ws.audioscrobbler.com/2.0/" > _data/lastfm-albums.json
+            "https://ws.audioscrobbler.com/2.0/" \
+            > _data/lastfm-albums.json
 
-          # Fetch the ten most-listened tracks from the last 30 days.
+          # Top tracks
           curl --fail-with-body --silent --show-error --get \
             --data-urlencode "method=user.gettoptracks" \
             --data-urlencode "user=$LASTFM_USERNAME" \
@@ -49,13 +65,44 @@ jobs:
             --data-urlencode "period=1month" \
             --data-urlencode "limit=10" \
             --data-urlencode "format=json" \
-            "https://ws.audioscrobbler.com/2.0/" > _data/lastfm-tracks.json
+            "https://ws.audioscrobbler.com/2.0/" \
+            > _data/lastfm-tracks.json
 
       - name: Commit updated data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _data/lastfm.json _data/lastfm-albums.json _data/lastfm-tracks.json
-          git diff --cached --quiet || git commit -m "Update Last.fm charts"
-          git push
 
+          git add _data/lastfm.json \
+                  _data/lastfm-albums.json \
+                  _data/lastfm-tracks.json
+
+          if git diff --cached --quiet; then
+            echo "No data changes to commit"
+          else
+            git commit -m "Update Last.fm charts"
+            git push
+          fi
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+          cache-version: 0
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Build with Jekyll
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
