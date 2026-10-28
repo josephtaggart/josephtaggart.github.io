@@ -4,4 +4,5 @@ entries:
       - title: the University of Warwick
         url: https://warwick.ac.uk/fac/sci/statistics/staff/academic-research/taggart/
       - title: Swansea University
-      
+  - title: my cv
+    url: /cv/      
