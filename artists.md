@@ -4,7 +4,8 @@ title: "music!"
 permalink: /music/
 ---
 
-<p>My most-listened artists, albums, and tracks of the last 30 days:</p>
+<p>My most-listened artists, albums, and tracks of the last 30 days.</p>
+<p>This info comes from <a href="https://www.last.fm/">last.fm</a>, using their API.<p>
 
 <h2>Artists</h2>
 {% assign artists = site.data.lastfm.topartists.artist %}
